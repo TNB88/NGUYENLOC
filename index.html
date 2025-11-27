@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2910/2910311.png">
     <link rel="icon" type="image/png" sizes="512x512" href="https://cdn-icons-png.flaticon.com/512/2910/2910311.png">
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/2910/2910311.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -29,7 +29,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             /* Nền Gradient Aurora mềm mại */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
@@ -124,17 +124,20 @@
         /* Đảm bảo nội dung nằm trên lớp spotlight */
         .calculator-card > * { position: relative; z-index: 1; }
         
+        /* --- CSS CHO THẺ H2 (ĐÃ FIX LỖI DẤU) --- */
         h2 {
             text-align: center;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: rgba(255, 255, 255, 0.001);
+            
             margin-bottom: 30px;
             font-weight: 900;
             font-size: 28px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: none; 
         }
 
         .form-group { margin-bottom: 24px; }
@@ -157,7 +160,7 @@
             font-size: 16px;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             color: var(--text-color);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
             border: 1px solid var(--input-border);
@@ -290,6 +293,20 @@
             75% { transform: translateX(5px); }
         }
 
+        /* --- CSS CHO FOOTER BẢN QUYỀN (MỚI) --- */
+        .main-footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0 30px;
+            /* Màu trắng mờ để nổi bật trên nền gradient nhưng không quá chói */
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Thêm bóng nhẹ cho dễ đọc */
+        }
+
         /* ================= CSS CHO CHẾ ĐỘ IN ẤN (PRINT MODE) ================= */
         @media print {
             body { background: none; background-color: #fff; color: #000; }
@@ -298,7 +315,8 @@
             }
             .calculator-card::before { display: none; } /* Tắt hiệu ứng spotlight khi in */
 
-            .marquee-container, .btn-group, h2, .error-message, .no-print, .date-picker-input { display: none !important; }
+            /* ẨN FOOTER BẢN QUYỀN KHI IN */
+            .marquee-container, .btn-group, h2, .error-message, .no-print, .date-picker-input, .main-footer { display: none !important; }
             
             .main-container { padding: 20px; margin: 0; align-items: flex-start; }
             
@@ -446,6 +464,10 @@
     </div>
 </div>
 
+<footer class="main-footer">
+    © 2024 Bản quyền thuộc về Bình Nguyên
+</footer>
+
 <script>
     // --- CẤU HÌNH CHO BỘ CHỌN NGÀY FLATPICKR ---
     let startDatePicker, endDatePicker;
@@ -463,7 +485,6 @@
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        // Cập nhật biến CSS để di chuyển tâm của radial gradient
         card.style.setProperty('--mouse-x', `${x}px`);
         card.style.setProperty('--mouse-y', `${y}px`);
     }
@@ -474,7 +495,6 @@
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            // Sử dụng hàm easing để số chạy mượt hơn (nhanh ở đầu, chậm ở cuối)
             const easeOutQuad = progress * (2 - progress); 
             let currentVal = Math.floor(easeOutQuad * (end - start) + start);
             
@@ -487,8 +507,7 @@
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             } else {
-                 // Đảm bảo giá trị cuối cùng chính xác
-                if (isCurrency) obj.innerHTML = formatVND(end);
+                 if (isCurrency) obj.innerHTML = formatVND(end);
             }
         };
         window.requestAnimationFrame(step);
@@ -507,7 +526,6 @@
     }
 
     function formatVND(amount) {
-        // Hàm định dạng tiền tệ, trả về chuỗi
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     }
 
@@ -571,20 +589,16 @@
         const interestAmount = principal * (rateAnnually / 100) * (daysDifference / 365);
         const totalAmount = principal + interestAmount;
 
-        // Hiển thị kết quả tĩnh
         document.getElementById('resultDays').textContent = daysDifference + " ngày";
         document.getElementById('resultAnnualRate').textContent = rateAnnually.toFixed(2) + " %/năm";
         
-        // Hiện khu vực kết quả trước để chạy hiệu ứng
         resultArea.style.display = 'block';
         btnPrint.style.display = 'flex';
 
-        // --- CHẠY HIỆU ỨNG SỐ NHẢY ---
-        // Lấy giá trị hiện tại (nếu có) để làm điểm bắt đầu, tránh nhảy từ 0 mỗi lần tính lại
         const currentInterest = parseCurrencyString(document.getElementById('resultInterest').textContent);
         const currentTotal = parseCurrencyString(document.getElementById('resultTotal').textContent);
 
-        animateValue(document.getElementById('resultInterest'), currentInterest, interestAmount, 1500, true); // Chạy trong 1.5s
+        animateValue(document.getElementById('resultInterest'), currentInterest, interestAmount, 1500, true); 
         animateValue(document.getElementById('resultTotal'), currentTotal, totalAmount, 1500, true);
     }
 
